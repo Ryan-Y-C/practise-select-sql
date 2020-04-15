@@ -221,19 +221,7 @@ public class Sql {
                 "         inner join GOODS\n" +
                 "                    on \"ORDER\".GOODS_ID = GOODS.ID\n" +
                 "group by \"ORDER\".ID";
-        List<Order> orders = new ArrayList<>();
-        try (PreparedStatement statement = databaseConnection.prepareStatement(sql)) {
-            ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                Order order = new Order();
-                order.id = resultSet.getInt(1);
-                order.userName = resultSet.getString(2);
-                order.goodsName = resultSet.getString(3);
-                order.totalPrice = resultSet.getBigDecimal(4);
-                orders.add(order);
-            }
-        }
-        return orders;
+        return getJoinOrders(databaseConnection,sql);
     }
     /**
      * 题目5：
@@ -270,6 +258,9 @@ public class Sql {
                 "         left join GOODS\n" +
                 "                    on \"ORDER\".GOODS_ID = GOODS.ID\n" +
                 "group by \"ORDER\".ID";
+        return getJoinOrders(databaseConnection,sql);
+    }
+    static List<Order> getJoinOrders(Connection databaseConnection,String sql) throws SQLException {
         List<Order> orders = new ArrayList<>();
         try (PreparedStatement statement = databaseConnection.prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery();
@@ -284,7 +275,6 @@ public class Sql {
         }
         return orders;
     }
-
     // 注意，运行这个方法之前，请先运行mvn initialize把测试数据灌入数据库
     public static void main(String[] args) throws SQLException {
         File projectDir = new File(System.getProperty("basedir", System.getProperty("user.dir")));
